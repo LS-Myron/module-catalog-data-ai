@@ -78,14 +78,9 @@ class Config
         );
     }
 
-    /**
-     * Removed check if product is new,
-     * now all configured attributes will have AI generated content when specified fields are empty
-     * @TODO: maybe readd check if product is new (&& $product->isObjectNew())
-     */
     public function canEnrich(Product $product)
     {
-        return $this->isEnabled() && $this->getApiKey();
+        return $this->isEnabled() && $this->getApiKey() && $product->isObjectNew();
     }
 
     public function getSystemPrompt()
