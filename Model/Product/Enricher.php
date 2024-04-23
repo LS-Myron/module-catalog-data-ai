@@ -9,12 +9,14 @@ use OpenAI\Factory;
 use OpenAI\Client;
 use OpenAI\Responses\Meta;
 use OpenAI\Exceptions\ErrorException;
+use OpenAI\Responses\Chat\CreateResponse;
+use OpenAI\Responses\Chat\CreateResponseChoice;
 
 class Enricher
 {
     private Client $client;
-    public function __construct
-    (
+
+    public function __construct(
         private Factory $clientFactory,
         private Config $config
     ) {
@@ -44,16 +46,10 @@ class Enricher
         return $prompt;
     }
 
-    public function enrichAttribute($product, $attributeCode)
+    public function getChatGptResponse($prompt, $product): CreateResponse
     {
-        if(!$product->getData('mageos_catalogai_overwrite') && $product->getData($attributeCode)){
-            return;
-        }
-        if($prompt = $this->config->getProductPrompt($attributeCode)) {
-
-            $prompt = $this->parsePrompt($prompt, $product);
-
-            $response = $this->client->chat()->create([
+        return $this->client->chat()->create(
+            [
                 'model' => $this->config->getApiModel(),
                 'temperature' => $this->config->getTemperature(),
                 'frequency_penalty' => $this->config->getFrequencyPenalty(),
@@ -69,17 +65,24 @@ class Enricher
                         'content' => $this->parsePrompt($prompt, $product)
                     ]
                 ]
-            ]);
-
-            // @TODO:  no exception?
-            if($result = $response->choices[0]) {
-                $product->setData($attributeCode, $result->message?->content);
-            }
-            $this->backoff($response->meta());
-        }
+            ]
+        );
     }
 
-    public function backoff(Meta $meta)
+    public function enrichAttribute($product, $attributeCode): ?CreateResponseChoice
+    {
+        $prompt = $this->config->getProductPrompt($attributeCode);
+        if ($prompt === null) {
+            return null;
+        }
+
+        $prompt = $this->parsePrompt($prompt, $product);
+
+        $response = $this->getChatGptResponse($prompt, $product);
+        return $response->choices[0] ?? null;
+    }
+
+    public function backoff(Meta $meta): void
     {
         if($meta->requestLimit->remaining < 1) {
             sleep($this->strToSeconds($meta->requestLimit->reset));
@@ -91,7 +94,7 @@ class Enricher
         }
     }
 
-    private function strToSeconds(string $time)
+    private function strToSeconds(string $time): float|int
     {
         preg_match('/(?:([0-9]+)h)?(?:([0-9]+)m)?(?:([0-9]+)s)?/', $time, $matches);
 
@@ -102,7 +105,7 @@ class Enricher
         return $hours * 3600 + $minutes * 60 + $seconds;
     }
 
-    public function execute(Product $product)
+    public function execute(Product $product): void
     {
         foreach ($this->getAttributes() as $attributeCode) {
             try {
@@ -113,6 +116,7 @@ class Enricher
                 $this->enrichAttribute($product, $attributeCode);
             }
         }
+
         //@TODO: throw exception?
     }
 }
