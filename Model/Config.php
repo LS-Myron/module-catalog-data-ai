@@ -65,7 +65,7 @@ class Config
         $prompt = $this->scopeConfig->getValue(
             $path
         );
-        $prefix = $this->getPrefixPrompt();
+        $prefix = $this->getPrefixPromp();
 
         return $prefix ? $prefix . $prompt : $prompt;
     }
