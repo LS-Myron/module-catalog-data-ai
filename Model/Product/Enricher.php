@@ -11,8 +11,8 @@ use OpenAI\Client;
 class Enricher
 {
     private Client $client;
-    public function __construct
-    (
+
+    public function __construct(
         private Factory $clientFactory,
         private Config $config
     ) {
