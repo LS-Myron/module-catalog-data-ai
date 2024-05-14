@@ -12,9 +12,9 @@ use MageOS\CatalogDataAI\Model\Config;
 
 class GenerateAiContentButton extends AbstractModifier
 {
-    public const TITLE = 'Generate Ai Content';
-    public const URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
-    public const PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
+    public const string TITLE = 'Generate Ai Content';
+    public const string URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
+    public const string PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
 
     public function __construct(
         protected Enricher $enricher,

@@ -38,10 +38,11 @@ class AiContent extends Action
      */
     public function execute(): Json
     {
-        $attributeCode = $this->getRequest()->getParam('attribute_code');
-        $value         = strip_tags($this->getRequest()->getParam('value'));
-        $productId     = $this->getRequest()->getParam('product_id');
-        $storeId       = (int) $this->getRequest()->getParam('store') ?? 0;
+        $params        = $this->getRequest()->getParams();
+        $attributeCode = $params['attribute_code'];
+        $value         = strip_tags($params['value']);
+        $productId     = $params['product_id'];
+        $storeId       = (int) $params['store'] ?? 0;
         $product       = $this->product->getById($productId, false, $storeId);
 
         $responseResult = null;

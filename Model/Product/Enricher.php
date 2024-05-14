@@ -17,8 +17,8 @@ class Enricher
     private Client $client;
 
     public function __construct(
-        private readonly Factory $clientFactory,
-        private readonly Config $config
+        private Factory $clientFactory,
+        private Config $config
     ) {
         $this->client = $this->clientFactory->withApiKey($this->config->getApiKey())
             ->make();
