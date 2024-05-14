@@ -14,7 +14,6 @@ define([
     }
 
     function resetValueToPrevious(target) {
-        // todo: get previous value and put this value back into the attributes' field
         catalogDataAiCore.updateTargetValue(target, catalogDataAiCore.getPreviousValue())
     }
 
