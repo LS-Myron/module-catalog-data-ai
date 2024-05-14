@@ -20,7 +20,8 @@ class Enricher
         private Factory $clientFactory,
         private Config $config
     ) {
-        $this->client = $this->clientFactory->withApiKey($this->config->getApiKey())
+        $this->client = $this->clientFactory
+            ->withApiKey($this->config->getApiKey())
             ->make();
     }
 
@@ -58,7 +59,7 @@ class Enricher
         return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
 
-    public function getOpenAiResponse(ProductInterface $product, string $prompt, int $storeId): CreateResponse
+    public function getOpenAiResponse($prompt, $product): CreateResponse
     {
         return $this->client->chat()->create(
             [
