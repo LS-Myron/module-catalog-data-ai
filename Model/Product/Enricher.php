@@ -45,7 +45,7 @@ class Enricher
         }, $prompt);
     }
 
-    public function getChatGptResponse($prompt, $product): CreateResponse
+    public function getOpenAiResponse($prompt, $product): CreateResponse
     {
         return $this->client->chat()->create(
             [
@@ -68,7 +68,7 @@ class Enricher
         );
     }
 
-    public function enrichAttribute($product, $attributeCode): ?CreateResponseChoice
+    public function prepareResponse($product, $attributeCode): ?CreateResponse
     {
         $prompt = $this->config->getProductPrompt($attributeCode);
         if ($prompt === null) {
@@ -77,8 +77,17 @@ class Enricher
 
         $prompt = $this->parsePrompt($prompt, $product);
 
-        $response = $this->getChatGptResponse($prompt, $product);
-        return $response->choices[0] ?? null;
+        return $this->getOpenAiResponse($prompt, $product);
+    }
+
+    public function enrichAttribute($product, $attributeCode): void
+    {
+        $responseResult = $this->prepareResponse($product, $attributeCode);
+        $responseResultContent = $responseResult->choices[0]?->message->content;
+        if ($responseResultContent !== null) {
+            $product->setData($attributeCode, $responseResultContent);
+        }
+        $this->backoff($response->meta());
     }
 
     public function backoff(Meta $meta): void
