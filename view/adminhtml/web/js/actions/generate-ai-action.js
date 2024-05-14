@@ -5,53 +5,27 @@
 define([
     'jquery',
     'underscore',
-    'mage/translate',
-    'mage/url',
-    'uiRegistry',
-    'tinymce',
-], function ($, _, translate, urlBuilder, uiRegistry, tinyMCE) {
+    'MageOS_CatalogDataAI/js/actions/core-action',
+], function ($, _, catalogDataAiCore) {
     'use strict';
 
     function generateContent(element) {
-        const target = this.getTarget(element),
-              productId = element.product_id;
+        const target = catalogDataAiCore.getTarget(element),
+              productId = element.product_id,
+              value = catalogDataAiCore.getTargetValue(target);
+
+        catalogDataAiCore.setPreviousValue(value);
 
         this.getGeneratedAiContent(
             target,
             element.url,
-            this.getTargetValue(target),
+            value,
             target.code,
             productId
         );
     }
 
-    function getTargetValue(target, value) {
-        let wysiwygTarget = tinyMCE.get(target.wysiwygId);
-        if (target.wysiwyg && wysiwygTarget !== null) {
-            return wysiwygTarget.getContent();
-        } else {
-            return target.value();
-        }
-    }
-
-    function updateTargetValue(target, value) {
-        let wysiwygTarget = tinyMCE.get(target.wysiwygId);
-        if (target.wysiwyg && wysiwygTarget !== null) {
-            wysiwygTarget.setContent(value);
-        } else {
-            target
-                .value(value)
-                .trigger('change');
-        }
-    }
-
-    function getTarget(element) {
-        let fullTargetPath = element.parentName + "." + element.targetName;
-        return uiRegistry.get(fullTargetPath);
-    }
-
     function getGeneratedAiContent(target, url, value, attributeCode, productId) {
-        const that = this;
         $.ajax({
             url: url,
             showLoader: true,
@@ -65,20 +39,13 @@ define([
             dataType : 'json',
             success: (result) => {
                 let content = result.response?.message?.content ?? '';
-                that.updateTargetValue(target, content);
+                catalogDataAiCore.updateTargetValue(target, content);
             }
         });
     }
 
     return {
         generateContent: generateContent,
-
-        getTarget: getTarget,
-
-        getTargetValue: getTargetValue,
-
-        updateTargetValue: updateTargetValue,
-
-        getGeneratedAiContent: getGeneratedAiContent
+        getGeneratedAiContent: getGeneratedAiContent,
     };
 });
