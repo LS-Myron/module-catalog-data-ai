@@ -10,25 +10,16 @@ define([
     'use strict';
 
     function resetContent(element) {
-        const target = catalogDataAiCore.getTarget(element),
-            productId = element.product_id;
-
-        console.log(catalogDataAiCore.getPreviousValue());
-
-        // TODO: run reset action
+        this.resetValueToPrevious(catalogDataAiCore.getTarget(element));
     }
 
-    function enableResetValue() {
-        // todo: create/display button after existing button
-    }
-
-    function resetValueToPrevious() {
+    function resetValueToPrevious(target) {
         // todo: get previous value and put this value back into the attributes' field
+        catalogDataAiCore.updateTargetValue(target, catalogDataAiCore.getPreviousValue())
     }
 
     return {
         resetContent: resetContent,
-        enableResetValue: enableResetValue,
         resetValueToPrevious: resetValueToPrevious,
     };
 });
