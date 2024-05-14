@@ -8,6 +8,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Config;
 use MageOS\CatalogDataAI\Model\Product\Enricher;
@@ -15,7 +16,7 @@ use OpenAI\Factory;
 use OpenAI\Client;
 class AiContent extends Action
 {
-    protected const PREFIX_PROMPT = " with extra params '%s'";
+    protected const string PREFIX_PROMPT = " with extra params '%s'";
     protected Client $client;
     public function __construct(
         Context $context,
@@ -34,6 +35,7 @@ class AiContent extends Action
     /**
      * TODO: this endpoint is 404 when not in scope 'all store views'
      * TODO: must return an error to the client when no prefix is set
+     * @throws NoSuchEntityException
      */
     public function execute(): Json
     {

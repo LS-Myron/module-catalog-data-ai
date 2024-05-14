@@ -4,55 +4,55 @@ declare(strict_types=1);
 namespace MageOS\CatalogDataAI\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\Store;
 USE Magento\Catalog\Model\Product;
 
 class Config
 {
-    public const XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
-    public const XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
-    public const XML_PATH_OPENAI_API_KEY = 'catalog_ai/settings/openai_key';
-    public const XML_PATH_OPENAI_API_MODEL = 'catalog_ai/settings/openai_model';
-    public const XML_PATH_OPENAI_API_MAX_TOKENS = 'catalog_ai/settings/openai_max_tokens';
-    public const XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT = 'catalog_ai/advanced/system_prompt';
-    public const XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE = 'catalog_ai/advanced/temperature';
-    public const XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
-    public const XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
+    public const string XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
+    public const string XML_PATH_ATTRIBUTE_GENERATE_CONTENT_BUTTONS = 'catalog_ai/settings/generate_content_buttons';
+    public const string XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
+    public const string XML_PATH_OPENAI_API_KEY = 'catalog_ai/settings/openai_key';
+    public const string XML_PATH_OPENAI_API_MODEL = 'catalog_ai/settings/openai_model';
+    public const string XML_PATH_OPENAI_API_MAX_TOKENS = 'catalog_ai/settings/openai_max_tokens';
+    public const string XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT = 'catalog_ai/advanced/system_prompt';
+    public const string XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE = 'catalog_ai/advanced/temperature';
+    public const string XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
+    public const string XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
     protected string $prefixPrompt = '';
 
     public function __construct(
         private readonly ScopeConfigInterface $scopeConfig
     ) {}
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(
             self::XML_PATH_ENRICH_ENABLED
         );
     }
 
-    public function IsAsync()
+    public function IsAsync(): bool
     {
         return $this->scopeConfig->isSetFlag(
             self::XML_PATH_USE_ASYNC
         );
     }
 
-    public function getApiKey()
+    public function getApiKey(): string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_KEY
         );
     }
 
-    public function getApiModel()
+    public function getApiModel(): mixed
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_MODEL
         );
     }
 
-    public function getApiMaxTokens()
+    public function getApiMaxTokens(): int
     {
         return (int)$this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_MAX_TOKENS
@@ -81,46 +81,48 @@ class Config
     /**
      * Removed check if product is new,
      * now all configured attributes will have AI generated content when specified fields are empty
-     * @TODO: maybe readd check if product is new (&& $product->isObjectNew())
+     * @TODO: maybe re-add check if product is new (&& $product->isObjectNew())
      */
-    public function canEnrich(Product $product)
+    public function canEnrich(Product $product): bool
     {
         return $this->isEnabled() && $this->getApiKey();
     }
 
-    public function getSystemPrompt()
+    public function getSystemPrompt(): mixed
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT
         );
     }
 
-    public function getTemperature()
+    public function getTemperature(): float
     {
         return (float)$this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE
         );
     }
 
-    public function getFrequencyPenalty()
+    public function getFrequencyPenalty(): float
     {
         return (float)$this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY
         );
     }
 
-    public function getPresencePenalty()
+    public function getPresencePenalty(): float
     {
         return (float)$this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY
         );
     }
 
-    /**
-     * @param string $prefixPrompt
-     *
-     * @return void
-     */
+    public function enableGenerateContentButtons(): float
+    {
+        return (float)$this->scopeConfig->getValue(
+            self::XML_PATH_ATTRIBUTE_GENERATE_CONTENT_BUTTONS
+        );
+    }
+
     public function setPrefixPrompt(string $prefixPrompt): void
     {
         $this->prefixPrompt = $prefixPrompt;
