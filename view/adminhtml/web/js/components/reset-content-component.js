@@ -14,7 +14,6 @@ define([
     return Button.extend({
         initialize: function () {
             this._super();
-            console.log('reset button init');
         },
 
         getTemplate: function () {
