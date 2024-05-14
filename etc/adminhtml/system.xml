@@ -19,7 +19,10 @@
                 <field id="generate_content_buttons" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
                     <label>Add AI buttons</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Add buttons after the assigned attributes to generate content realtime. When Asynchronous enrichment is enabled then no buttons are added to the attributes]]></comment>
+                    <comment><![CDATA[
+                    Add buttons after the assigned attributes to generate content realtime.
+                    <br />
+                    NB: When Asynchronous enrichment is enabled then no buttons are added to the attributes.]]></comment>
                 </field>
             </group>
             <group id="open_ai" translate="label" sortOrder="20" showInDefault="1" showInStore="1">
@@ -39,7 +42,10 @@
                 <comment>
                     <![CDATA[Use {{product_attribute_code}} (e.g. {{name}} for product name}) as product attribute data placeholder
                     <br />
-                    To enrich a meta attribute, the corresponding default value (mask) must be removed, see <a href="https://experienceleague.adobe.com/docs/commerce-admin/catalog/products/product-workspace.html#edit-the-placeholder-value">Edit the placeholder value</a>]]>
+                    To enrich a meta attribute, the corresponding default value (mask) must be removed, see <a href="https://experienceleague.adobe.com/docs/commerce-admin/catalog/products/product-workspace.html#edit-the-placeholder-value">Edit the placeholder value</a>
+                    <br />
+                    NB: When no text is added to the attributes, no content is generated.
+                    ]]>
                 </comment>
                 <field id="short_description" translate="label comment" type="textarea" sortOrder="10" showInDefault="1" canRestore="1">
                     <label>Short Description</label>
