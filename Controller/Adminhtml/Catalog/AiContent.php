@@ -48,21 +48,19 @@ class AiContent extends Action
 
         $responseResult = null;
 
-        if ($this->config->canEnrich($product) && !$this->config->isAsync()) {
+        if ($this->config->isEnabled() && $this->config->getApiKey() && !$this->config->isAsync()) {
             if ($value) {
                 $promptPrefix = sprintf(self::PREFIX_PROMPT, $value);
                 $this->config->setPrefixPrompt($promptPrefix);
             }
-            $responseResult = $this->enricher->enrichAttribute($product, $attributeCode);
+
+            $responseResult = $this->enricher->prepareResponse($product, $attributeCode);
         }
 
-        $result = $this->jsonFactory->create();
-        $result->setData(
+        return $this->jsonFactory->create()->setData(
             [
-                'response' => $responseResult
+                'response' => $responseResult->choices[0]
             ]
         );
-
-        return $result;
     }
 }
