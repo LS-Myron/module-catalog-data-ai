@@ -15,14 +15,14 @@ class Enricher
     private Client $client;
 
     public function __construct(
-        private Factory $clientFactory,
-        private Config $config
+        private readonly Factory $clientFactory,
+        private readonly Config $config
     ) {
         $this->client = $this->clientFactory->withApiKey($this->config->getApiKey())
             ->make();
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return [
             'short_description',
@@ -36,12 +36,11 @@ class Enricher
     /**
      * @todo move to parser class/pool
      */
-    public function parsePrompt($prompt, $product): String
+    public function parsePrompt($prompt, $product): string
     {
-        $prompt = preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) use ($product) {
+        return preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) use ($product) {
             return $product->getData($matches[1]);
         }, $prompt);
-        return $prompt;
     }
 
     public function getChatGptResponse($prompt, $product): CreateResponse
@@ -80,7 +79,7 @@ class Enricher
         return $response->choices[0] ?? null;
     }
 
-    public function execute(Product $product)
+    public function execute(Product $product): void
     {
         foreach ($this->getAttributes() as $attributeCode) {
             $this->enrichAttribute($product, $attributeCode);

@@ -8,18 +8,20 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Product\Enricher;
+use MageOS\CatalogDataAI\Model\Config;
 
 class GenerateAiContentButton extends AbstractModifier
 {
-    public const TITLE = 'Generate Ai Content';
-    public const URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
-    public const PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
+    public const string TITLE = 'Generate Ai Content';
+    public const string URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
+    public const string PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
 
     public function __construct(
         protected Enricher $enricher,
         protected StoreManagerInterface $storeManager,
         protected RequestInterface $request,
         protected ArrayManager $arrayManager,
+        protected Config $config,
     ) {
     }
 
@@ -30,6 +32,10 @@ class GenerateAiContentButton extends AbstractModifier
 
     public function modifyMeta(array $meta): array
     {
+        if ($this->config->IsAsync() || !$this->config->enableGenerateContentButtons()) {
+            return $meta;
+        }
+
         foreach ($this->getAttributes() as $attributeCode) {
             $path = $this->getParentPath($attributeCode, $meta);
             if ($path === null) {
