@@ -51,8 +51,7 @@ class AiContent extends Action
                 $promptPrefix = sprintf(self::PREFIX_PROMPT, $value);
                 $this->config->setPrefixPrompt($promptPrefix);
             }
-            $responseResult = $this->enricher->enrichAttribute($product,
-                $attributeCode);
+            $responseResult = $this->enricher->enrichAttribute($product, $attributeCode);
         }
 
         $result = $this->jsonFactory->create();
