@@ -12,15 +12,18 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="generate_content_buttons" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
-                    <label>Generate content buttons</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <hint><![CDATA[Add buttons after the assigned attributes]]></hint>
-                </field>
                 <field id="async" translate="label" type="select" sortOrder="20" showInDefault="1" canRestore="1">
                     <label>Asynchronous enrichment</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="generate_content_buttons" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
+                    <label>Add AI buttons</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Add buttons after the assigned attributes to generate content realtime. When Asynchronous enrichment is enabled then no buttons are added to the attributes]]></comment>
+                </field>
+            </group>
+            <group id="open_ai" translate="label" sortOrder="20" showInDefault="1" showInStore="1">
+                <label>OpenAi settings</label>
                 <field id="openai_key" translate="label comment" type="password" sortOrder="30" showInDefault="1" canRestore="1">
                     <label>OpenAI API key</label>
                 </field>
@@ -31,7 +34,7 @@
                     <label>OpenAI API Max Tokens</label>
                 </field>
             </group>
-            <group id="product" translate="label" sortOrder="20" showInDefault="1" showInStore="1">
+            <group id="product" translate="label" sortOrder="30" showInDefault="1" showInStore="1">
                 <label>Product Fields Auto-Generation</label>
                 <comment>
                     <![CDATA[Use {{product_attribute_code}} (e.g. {{name}} for product name}) as product attribute data placeholder
@@ -54,7 +57,7 @@
                     <label>Meta Description</label>
                 </field>
             </group>
-            <group id="advanced" translate="label" sortOrder="30" showInDefault="1">
+            <group id="advanced" translate="label" sortOrder="40" showInDefault="1">
                 <label>Advanced Settings</label>
                 <field id="system_prompt" translate="label comment" type="text" sortOrder="10" showInDefault="1" canRestore="1">
                     <label>System Prompt</label>
