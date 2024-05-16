@@ -8,16 +8,17 @@ USE Magento\Catalog\Model\Product;
 
 class Config
 {
-    public const string XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
-    public const string XML_PATH_ATTRIBUTE_GENERATE_CONTENT_BUTTONS = 'catalog_ai/settings/generate_content_buttons';
-    public const string XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
-    public const string XML_PATH_OPENAI_API_KEY = 'catalog_ai/open_ai/openai_key';
-    public const string XML_PATH_OPENAI_API_MODEL = 'catalog_ai/open_ai/openai_model';
-    public const string XML_PATH_OPENAI_API_MAX_TOKENS = 'catalog_ai/open_ai/openai_max_tokens';
-    public const string XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT = 'catalog_ai/advanced/system_prompt';
-    public const string XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE = 'catalog_ai/advanced/temperature';
-    public const string XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
-    public const string XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
+    public const XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
+    public const XML_PATH_ATTRIBUTE_GENERATE_CONTENT_BUTTONS = 'catalog_ai/settings/generate_content_buttons';
+    public const XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
+    public const XML_PATH_OPENAI_API_KEY = 'catalog_ai/open_ai/openai_key';
+    public const XML_PATH_OPENAI_API_MODEL = 'catalog_ai/open_ai/openai_model';
+    public const XML_PATH_OPENAI_API_MAX_TOKENS = 'catalog_ai/open_ai/openai_max_tokens';
+    public const XML_PATH_OPENAI_API_ADVANCED_TRANSLATE_OUTPUT = 'catalog_ai/advanced/translate_output';
+    public const XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT = 'catalog_ai/advanced/system_prompt';
+    public const XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE = 'catalog_ai/advanced/temperature';
+    public const XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
+    public const XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
     protected string $prefixPrompt = '';
     protected string $outputLanguage = 'en_US';
 

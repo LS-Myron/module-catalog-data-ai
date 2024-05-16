@@ -16,7 +16,7 @@ use OpenAI\Factory;
 use OpenAI\Client;
 class AiContent extends Action
 {
-    protected const string PREFIX_PROMPT = " with extra params '%s'";
+    protected const PREFIX_PROMPT = " with extra params '%s'";
     protected Client $client;
     public function __construct(
         Context $context,
