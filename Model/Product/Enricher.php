@@ -51,6 +51,10 @@ class Enricher
 
     public function addOutputLanguage($prompt): string
     {
+        if (!$this->config->getIsOutputTranslated()) {
+            return $prompt;
+        }
+
         $outputLanguage = $this->config->getOutputLanguage();
         return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
