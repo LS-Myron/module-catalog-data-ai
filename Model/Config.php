@@ -19,6 +19,7 @@ class Config
     public const string XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
     public const string XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
     protected string $prefixPrompt = '';
+    protected string $outputLanguage = 'en_US';
 
     public function __construct(
         private readonly ScopeConfigInterface $scopeConfig
@@ -126,5 +127,15 @@ class Config
     public function getPrefixPrompt(): string
     {
         return $this->prefixPrompt;
+    }
+
+    public function setOutputLanguage(string $localeCode): void
+    {
+        $this->outputLanguage = $localeCode;
+    }
+
+    public function getOutputLanguage(): string
+    {
+        return $this->outputLanguage;
     }
 }
