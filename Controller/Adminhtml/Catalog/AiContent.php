@@ -33,8 +33,6 @@ class AiContent extends Action
     }
 
     /**
-     * TODO: this endpoint is 404 when not in scope 'all store views'
-     * TODO: must return an error to the client when no prefix is set
      * @throws NoSuchEntityException
      */
     public function execute(): Json
@@ -48,7 +46,7 @@ class AiContent extends Action
 
         $responseResult = null;
 
-        if ($this->config->isEnabled() && $this->config->getApiKey() && !$this->config->isAsync()) {
+        if ($this->config->isEnabled() && $this->config->getApiKey() || !$this->config->isAsync()) {
             if ($value) {
                 $promptPrefix = sprintf(self::PREFIX_PROMPT, $value);
                 $this->config->setPrefixPrompt($promptPrefix);
