@@ -65,16 +65,21 @@
             </group>
             <group id="advanced" translate="label" sortOrder="40" showInDefault="1">
                 <label>Advanced Settings</label>
-                <field id="system_prompt" translate="label comment" type="text" sortOrder="10" showInDefault="1" canRestore="1">
+                <field id="translate_output" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
+                    <label>Translate OpenAI output</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Translate all openai output to the selected language per store scope.</comment>
+                </field>
+                <field id="system_prompt" translate="label comment" type="text" sortOrder="20" showInDefault="1" canRestore="1">
                     <label>System Prompt</label>
                 </field>
                 <field id="temperature" translate="label comment" type="text" sortOrder="20" showInDefault="1" canRestore="1">
                     <label>System Prompt</label>
                 </field>
-                <field id="frequency_penalty" translate="label comment" type="text" sortOrder="30" showInDefault="1" canRestore="1">
+                <field id="frequency_penalty" translate="label comment" type="text" sortOrder="40" showInDefault="1" canRestore="1">
                     <label>Frequency Penalty</label>
                 </field>
-                <field id="presence_penalty" translate="label comment" type="text" sortOrder="30" showInDefault="1" canRestore="1">
+                <field id="presence_penalty" translate="label comment" type="text" sortOrder="40" showInDefault="1" canRestore="1">
                     <label>Presence Penalty</label>
                 </field>
             </group>
