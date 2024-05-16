@@ -78,18 +78,19 @@ class Enricher
 
     public function prepareResponse($product, $attributeCode): ?CreateResponse
     {
-        $prompt = $this->config->getProductPrompt($attributeCode);
+        $prompt = $this->config->getProductAttributePrompt($attributeCode);
         if ($prompt === null) {
             return null;
         }
-
-        $prompt = $this->parsePrompt($prompt, $product);
-
         return $this->getOpenAiResponse($prompt, $product);
     }
 
     public function enrichAttribute($product, $attributeCode): void
     {
+        if(!$product->getData('mageos_catalogai_overwrite') && $product->getData($attributeCode)){
+            return;
+        }
+
         $responseResult = $this->prepareResponse($product, $attributeCode);
         $responseResultContent = $responseResult->choices[0]?->message->content;
         if ($responseResultContent !== null) {
