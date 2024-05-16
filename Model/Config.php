@@ -130,4 +130,11 @@ class Config
     {
         return $this->outputLanguage;
     }
+
+    public function getEnableTranslateOutput(): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_OPENAI_API_ADVANCED_TRANSLATE_OUTPUT
+        );
+    }
 }
