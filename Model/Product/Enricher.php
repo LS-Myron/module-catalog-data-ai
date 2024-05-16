@@ -40,8 +40,6 @@ class Enricher
      */
     public function parsePrompt($prompt, $product): string
     {
-        $this->config->setOutputLanguage('nl_NL');
-
         $prompt = $this->addOutputLanguage($prompt);
 
         return preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) use ($product) {
