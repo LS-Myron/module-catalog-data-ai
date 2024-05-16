@@ -38,9 +38,19 @@ class Enricher
      */
     public function parsePrompt($prompt, $product): string
     {
+        $this->config->setOutputLanguage('nl_NL');
+
+        $prompt = $this->addOutputLanguage($prompt);
+
         return preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) use ($product) {
             return $product->getData($matches[1]);
         }, $prompt);
+    }
+
+    public function addOutputLanguage($prompt): string
+    {
+        $outputLanguage = $this->config->getOutputLanguage();
+        return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
 
     public function getOpenAiResponse($prompt, $product): CreateResponse
