@@ -28,7 +28,8 @@ class AiContent extends Action
         private readonly Enricher $enricher
     ) {
         parent::__construct($context);
-        $this->client = $this->clientFactory->withApiKey($this->config->getApiKey())
+        $this->client = $this->clientFactory
+            ->withApiKey($this->config->getApiKey())
             ->make();
     }
 

@@ -60,7 +60,7 @@ class Config
         );
     }
 
-    public function getProductPrompt(string $attributeCode): ?string
+    public function getProductAttributePrompt(string $attributeCode): ?string
     {
         $path = 'catalog_ai/product/' . $attributeCode;
         $prompt = $this->scopeConfig->getValue(
@@ -69,14 +69,6 @@ class Config
         $prefix = $this->getPrefixPrompt();
 
         return $prefix ? $prefix . $prompt : $prompt;
-    }
-
-    public function getProductPromptToken(String $attributeCode)
-    {
-        $path = 'catalog_ai/product/' . $attributeCode;
-        return $this->scopeConfig->getValue(
-            $path
-        );
     }
 
     public function canEnrich(Product $product): bool
