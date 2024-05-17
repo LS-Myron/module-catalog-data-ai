@@ -59,7 +59,7 @@ class Enricher
         return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
 
-    public function getOpenAiResponse($prompt, $product): CreateResponse
+    public function getOpenAiResponse(ProductInterface $product, string $prompt, int $storeId): CreateResponse
     {
         return $this->client->chat()->create(
             [
@@ -98,10 +98,9 @@ class Enricher
         }
 
         $responseResult = $this->prepareResponse($product, $attributeCode, $storeId);
-        $responseResultContent = $responseResult;
-        if (isset($responseResultContent->choices)) {
+        if (isset($responseResult->choices)) {
             $product
-                ->setData($attributeCode, $responseResultContent->choices[0]->message->content)
+                ->setData($attributeCode, $responseResult->choices[0]->message->content)
                 ->setStoreId($storeId);
         }
         $this->backoff($response->meta());
