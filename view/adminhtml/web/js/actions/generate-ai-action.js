@@ -21,7 +21,8 @@ define([
             element.url,
             value,
             target.code,
-            productId
+            productId,
+            element.store
         );
     }
 
@@ -34,6 +35,7 @@ define([
                 value,
                 attribute_code: attributeCode,
                 product_id: productId,
+                store: store,
             },
             type: "POST",
             dataType : 'json',

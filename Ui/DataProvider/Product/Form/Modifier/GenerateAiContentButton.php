@@ -9,24 +9,24 @@ declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Ui\DataProvider\Product\Form\Modifier;
 
+use Magento\Backend\Model\UrlInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Product\Enricher;
 use MageOS\CatalogDataAI\Model\Config;
 
 class GenerateAiContentButton extends AbstractModifier
 {
-    public const string TITLE_AI_BUTTON = 'Generate Ai Content';
-    public const string TITLE_RESET_BUTTON = 'Reset Ai Content';
-    public const string URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
-    public const string PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
-    public const string PATH_SUFFIX_RESET_BUTTON = '/ai_reset_button/arguments/data/config';
+    public const TITLE_AI_BUTTON = 'Generate Ai Content';
+    public const TITLE_RESET_BUTTON = 'Reset Ai Content';
+    public const URL_CONTROLLER = 'catalog_data_ai/catalog/aicontent';
+    public const PATH_SUFFIX_AI_BUTTON = '/ai_button/arguments/data/config';
+    public const PATH_SUFFIX_RESET_BUTTON = '/ai_reset_button/arguments/data/config';
 
     public function __construct(
         protected Enricher $enricher,
-        protected StoreManagerInterface $storeManager,
+        protected UrlInterface $urlBuilder,
         protected RequestInterface $request,
         protected ArrayManager $arrayManager,
         protected Config $config,
@@ -87,13 +87,15 @@ class GenerateAiContentButton extends AbstractModifier
 
     public function generateAiContentButton(string $attributeCode): array
     {
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl();
-        $title = self::TITLE_AI_BUTTON;
+        $baseUrl = $this->urlBuilder->getBaseUrl();
+        $adminUrlPrefix = $this->urlBuilder->getAreaFrontName();
+        $fullUrl = $baseUrl . $adminUrlPrefix . '/' . self::URL_CONTROLLER;
         return [
-            'url' => $baseUrl . self::URL_CONTROLLER,
+            'url' => $fullUrl,
             'product_id' => $this->request->getParam('id'),
+            'store' => $this->request->getParam('store'),
             'targetName' => $attributeCode,
-            'title' => __($title),
+            'title' => __(self::TITLE_AI_BUTTON),
             'componentType' => "button",
             'component' => 'MageOS_CatalogDataAI/js/components/generate-ai-component',
             'template' => 'ui/form/components/button/container',
@@ -107,11 +109,10 @@ class GenerateAiContentButton extends AbstractModifier
 
     public function generateResetButton(string $attributeCode): array
     {
-        $title = self::TITLE_RESET_BUTTON;
         return [
             'product_id' => $this->request->getParam('id'),
             'targetName' => $attributeCode,
-            'title' => __($title),
+            'title' => __(self::TITLE_RESET_BUTTON),
             'componentType' => "button",
             'component' => 'MageOS_CatalogDataAI/js/components/reset-content-component',
             'template' => 'ui/form/components/button/container',
