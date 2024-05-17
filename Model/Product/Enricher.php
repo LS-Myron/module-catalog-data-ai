@@ -99,7 +99,9 @@ class Enricher
         $responseResult = $this->prepareResponse($product, $attributeCode, $storeId);
         $responseResultContent = $responseResult;
         if (isset($responseResultContent->choices)) {
-            $product->setData($attributeCode, $responseResultContent->choices[0]->message->content);
+            $product
+                ->setData($attributeCode, $responseResultContent->choices[0]->message->content)
+                ->setStoreId($storeId);
         }
         $this->backoff($response->meta());
     }
