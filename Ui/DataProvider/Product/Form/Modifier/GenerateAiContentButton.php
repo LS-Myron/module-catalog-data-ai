@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Ui\DataProvider\Product\Form\Modifier;
 
+use Magento\Backend\Model\UrlInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Product\Enricher;
 use MageOS\CatalogDataAI\Model\Config;
 
@@ -18,7 +18,7 @@ class GenerateAiContentButton extends AbstractModifier
 
     public function __construct(
         protected Enricher $enricher,
-        protected StoreManagerInterface $storeManager,
+        protected UrlInterface $urlBuilder,
         protected RequestInterface $request,
         protected ArrayManager $arrayManager,
         protected Config $config,
@@ -73,13 +73,15 @@ class GenerateAiContentButton extends AbstractModifier
 
     public function generateAiContentButton(string $attributeCode): array
     {
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl();
-        $title = self::TITLE;
+        $baseUrl = $this->urlBuilder->getBaseUrl();
+        $adminUrlPrefix = $this->urlBuilder->getAreaFrontName();
+        $fullUrl = $baseUrl . $adminUrlPrefix . '/' . self::URL_CONTROLLER;
         return [
-            'url' => $baseUrl . self::URL_CONTROLLER,
+            'url' => $fullUrl,
             'product_id' => $this->request->getParam('id'),
+            'store' => $this->request->getParam('store'),
             'targetName' => $attributeCode,
-            'title' => __($title),
+            'title' => __(self::TITLE),
             'componentType' => "button",
             'component' => 'MageOS_CatalogDataAI/js/components/generate-ai-component',
             'template' => 'ui/form/components/button/container',

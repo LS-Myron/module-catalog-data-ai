@@ -21,7 +21,8 @@ define([
             element.url,
             this.getTargetValue(target),
             target.code,
-            productId
+            productId,
+            element.store
         );
     }
 
@@ -50,7 +51,7 @@ define([
         return uiRegistry.get(fullTargetPath);
     }
 
-    function getGeneratedAiContent(target, url, value, attributeCode, productId) {
+    function getGeneratedAiContent(target, url, value, attributeCode, productId, store) {
         const that = this;
         $.ajax({
             url: url,
@@ -60,6 +61,7 @@ define([
                 value,
                 attribute_code: attributeCode,
                 product_id: productId,
+                store: store,
             },
             type: "POST",
             dataType : 'json',

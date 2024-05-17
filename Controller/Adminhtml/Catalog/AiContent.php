@@ -38,11 +38,10 @@ class AiContent extends Action
      */
     public function execute(): Json
     {
-        $params        = $this->getRequest()->getParams();
-        $attributeCode = $params['attribute_code'];
-        $value         = strip_tags($params['value']);
-        $productId     = $params['product_id'];
-        $storeId       = $params['store'] ?? 0;
+        $attributeCode = $this->getRequest()->getParam('attribute_code');
+        $value         = strip_tags($this->getRequest()->getParam('value'));
+        $productId     = $this->getRequest()->getParam('product_id');
+        $storeId       = (int) $this->getRequest()->getParam('store') ?? 0;
         $product       = $this->product->getById($productId, false, $storeId);
 
         $responseResult = null;
@@ -53,13 +52,11 @@ class AiContent extends Action
                 $this->config->setPrefixPrompt($promptPrefix);
             }
 
-            $responseResult = $this->enricher->prepareResponse($product, $attributeCode);
+            $responseResult = $this->enricher->prepareResponse($product, $attributeCode, $storeId);
         }
 
-        return $this->jsonFactory->create()->setData(
-            [
-                'response' => $responseResult->choices[0]
-            ]
-        );
+        return $this->jsonFactory->create()->setData([
+            'response' => $responseResult->choices[0]
+        ]);
     }
 }
