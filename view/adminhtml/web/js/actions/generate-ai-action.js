@@ -26,7 +26,7 @@ define([
         );
     }
 
-    function getGeneratedAiContent(target, url, value, attributeCode, productId) {
+    function getGeneratedAiContent(target, url, value, attributeCode, productId, store) {
         $.ajax({
             url: url,
             showLoader: true,
