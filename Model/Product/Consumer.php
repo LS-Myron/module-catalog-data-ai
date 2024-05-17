@@ -28,8 +28,9 @@ class Consumer
         // @TODO: enrich for all stores if different value or language
         $this->storeManager->setCurrentStore(0);
         $product = $this->productRepository->getById($request->getId());
+        $storeId = $request->getId();
         $product->setData('mageos_catalogai_overwrite', $request->getOverwrite());
-        $this->enricher->execute($product);
+        $this->enricher->execute($product, $storeId);
         $this->productRepository->save($product);
     }
 

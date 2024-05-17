@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Model;
 
+use Magento\Backend\Model\Session\AdminConfig;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-USE Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product;
+use Magento\Store\Model\ScopeInterface;
 
 class Config
 {
+    public const XML_PATH_LOCALE_CODE = 'general/locale/code';
     public const XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
     public const XML_PATH_ATTRIBUTE_GENERATE_CONTENT_BUTTONS = 'catalog_ai/settings/generate_content_buttons';
     public const XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
@@ -20,10 +24,10 @@ class Config
     public const XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
     public const XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY = 'catalog_ai/advanced/presence_penalty';
     protected string $prefixPrompt = '';
-    protected string $outputLanguage = 'en_US';
 
     public function __construct(
-        private readonly ScopeConfigInterface $scopeConfig
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly AdminConfig $adminConfig
     ) {}
 
     public function isEnabled(): bool
@@ -72,7 +76,7 @@ class Config
         return $prefix ? $prefix . $prompt : $prompt;
     }
 
-    public function canEnrich(Product $product): bool
+    public function canEnrich(ProductInterface $product): bool
     {
         return $this->isEnabled() && $this->getApiKey() && $product->isObjectNew();
     }
@@ -122,14 +126,13 @@ class Config
         return $this->prefixPrompt;
     }
 
-    public function setOutputLanguage(string $localeCode): void
+    public function getOutputLanguage(int $storeId = 0): string
     {
-        $this->outputLanguage = $localeCode;
-    }
-
-    public function getOutputLanguage(): string
-    {
-        return $this->outputLanguage;
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_LOCALE_CODE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     public function getIsOutputTranslated(): bool
