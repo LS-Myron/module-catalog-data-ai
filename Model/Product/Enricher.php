@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Model\Product;
 
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Config;
-use Magento\Catalog\Model\Product;
 use OpenAI\Factory;
 use OpenAI\Client;
 use OpenAI\Responses\Meta;
 use OpenAI\Exceptions\ErrorException;
 use OpenAI\Responses\Chat\CreateResponse;
-use OpenAI\Responses\Chat\CreateResponseChoice;
 
 class Enricher
 {
@@ -38,26 +38,27 @@ class Enricher
     /**
      * @todo move to parser class/pool
      */
-    public function parsePrompt($prompt, $product): string
+    public function parsePrompt(ProductInterface $product, string $prompt, int $storeId): string
     {
-        $prompt = $this->addOutputLanguage($prompt);
+        $prompt = $this->addOutputLanguage($prompt, $storeId);
 
         return preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) use ($product) {
             return $product->getData($matches[1]);
         }, $prompt);
     }
 
-    public function addOutputLanguage($prompt): string
+    public function addOutputLanguage(string $prompt, int $storeId = 0): string
     {
         if (!$this->config->getIsOutputTranslated()) {
             return $prompt;
         }
 
-        $outputLanguage = $this->config->getOutputLanguage();
+        $outputLanguage = $this->config->getOutputLanguage($storeId);
+
         return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
 
-    public function getOpenAiResponse($prompt, $product): CreateResponse
+    public function getOpenAiResponse(ProductInterface $product, string $prompt, int $storeId): CreateResponse
     {
         return $this->client->chat()->create(
             [
@@ -73,32 +74,32 @@ class Enricher
                     ],
                     [
                         'role' => 'user',
-                        'content' => $this->parsePrompt($prompt, $product)
+                        'content' => $this->parsePrompt($product, $prompt, $storeId)
                     ]
                 ]
             ]
         );
     }
 
-    public function prepareResponse($product, $attributeCode): ?CreateResponse
+    public function prepareResponse(ProductInterface $product, string $attributeCode, int $storeId): ?CreateResponse
     {
         $prompt = $this->config->getProductAttributePrompt($attributeCode);
         if ($prompt === null) {
             return null;
         }
-        return $this->getOpenAiResponse($prompt, $product);
+        return $this->getOpenAiResponse($product, $prompt, $storeId);
     }
 
-    public function enrichAttribute($product, $attributeCode): void
+    public function enrichAttribute(ProductInterface $product, string $attributeCode, int $storeId): void
     {
         if(!$product->getData('mageos_catalogai_overwrite') && $product->getData($attributeCode)){
             return;
         }
 
-        $responseResult = $this->prepareResponse($product, $attributeCode);
-        $responseResultContent = $responseResult->choices[0]?->message->content;
-        if ($responseResultContent !== null) {
-            $product->setData($attributeCode, $responseResultContent);
+        $responseResult = $this->prepareResponse($product, $attributeCode, $storeId);
+        $responseResultContent = $responseResult;
+        if (isset($responseResultContent->choices)) {
+            $product->setData($attributeCode, $responseResultContent->choices[0]->message->content);
         }
         $this->backoff($response->meta());
     }
@@ -126,15 +127,15 @@ class Enricher
         return $hours * 3600 + $minutes * 60 + $seconds;
     }
 
-    public function execute(Product $product): void
+    public function execute(ProductInterface $product, int $storeId = 0): void
     {
         foreach ($this->getAttributes() as $attributeCode) {
             try {
-                $this->enrichAttribute($product, $attributeCode);
+                $this->enrichAttribute($product, $attributeCode, $storeId);
             } catch (ErrorException $e) {
                 // try it one more time just in case we failed to catch the limit in backoff
                 sleep(60);
-                $this->enrichAttribute($product, $attributeCode);
+                $this->enrichAttribute($product, $attributeCode, $storeId);
             }
         }
 
