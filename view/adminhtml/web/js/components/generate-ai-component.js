@@ -1,7 +1,3 @@
-/**
- * Copyright Elgentos BV. All rights reserved.
- * https://www.elgentos.nl/
- */
 define([
     'jquery',
     'Magento_Ui/js/form/components/button',
