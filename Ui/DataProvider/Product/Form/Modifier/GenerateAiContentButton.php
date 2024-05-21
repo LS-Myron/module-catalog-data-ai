@@ -1,10 +1,4 @@
 <?php
-
-/**
- * Copyright © Elgentos. All rights reserved.
- * https://elgentos.nl
- */
-
 declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Ui\DataProvider\Product\Form\Modifier;

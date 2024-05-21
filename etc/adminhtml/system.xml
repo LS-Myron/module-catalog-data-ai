@@ -12,10 +12,6 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="async" translate="label" type="select" sortOrder="20" showInDefault="1" canRestore="1">
-                    <label>Asynchronous enrichment</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
                 <field id="generate_content_buttons" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
                     <label>Add AI buttons</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -23,6 +19,10 @@
                     Add buttons after the assigned attributes to generate content realtime.
                     <br />
                     NB: When Asynchronous enrichment is enabled then no buttons are added to the attributes.]]></comment>
+                </field>
+                <field id="async" translate="label" type="select" sortOrder="20" showInDefault="1" canRestore="1">
+                    <label>Asynchronous enrichment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
             <group id="open_ai" translate="label" sortOrder="20" showInDefault="1" showInStore="1">
