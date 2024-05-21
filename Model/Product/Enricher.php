@@ -8,6 +8,8 @@ use Magento\Store\Model\StoreManagerInterface;
 use MageOS\CatalogDataAI\Model\Config;
 use OpenAI\Factory;
 use OpenAI\Client;
+use OpenAI\Responses\Meta\MetaInformation;
+use OpenAI\Exceptions\ErrorException;
 use OpenAI\Responses\Chat\CreateResponse;
 
 class Enricher
@@ -15,11 +17,12 @@ class Enricher
     private Client $client;
 
     public function __construct(
-        private readonly Factory $clientFactory,
-        private readonly Config $config,
-        protected StoreManagerInterface $storeManager,
-    ) {
-        $this->client = $this->clientFactory->withApiKey($this->config->getApiKey())
+        private Factory $clientFactory,
+        private Config  $config
+    )
+    {
+        $this->client = $this->clientFactory
+            ->withApiKey($this->config->getApiKey())
             ->make();
     }
 
@@ -53,7 +56,6 @@ class Enricher
         }
 
         $outputLanguage = $this->config->getOutputLanguage($storeId);
-            $x = 'debug';
 
         return $prompt . sprintf(' text to "%s"', $outputLanguage);
     }
@@ -92,23 +94,61 @@ class Enricher
 
     public function enrichAttribute(ProductInterface $product, string $attributeCode, int $storeId): void
     {
-        if(!$product->getData('mageos_catalogai_overwrite') && $product->getData($attributeCode)){
+        $responseResult = $this->prepareResponse($product, $attributeCode, $storeId);
+
+        if ((!$product->getData('mageos_catalogai_overwrite')
+                && $product->getData($attributeCode))
+            || $responseResult === null
+        ) {
             return;
         }
 
-        $responseResult = $this->prepareResponse($product, $attributeCode, $storeId);
-        $responseResultContent = $responseResult;
-        if (isset($responseResultContent->choices)) {
+        if (isset($responseResult->choices)) {
             $product
-                ->setData($attributeCode, $responseResultContent->choices[0]->message->content)
+                ->setData($attributeCode, $responseResult->choices[0]->message->content)
                 ->setStoreId($storeId);
         }
+
+        if ($responseResult->meta()) {
+            $this->backoff($responseResult->meta());
+        }
+    }
+
+    public function backoff(MetaInformation $meta): void
+    {
+        if ($meta->requestLimit->remaining < 1) {
+            sleep($this->strToSeconds($meta->requestLimit->reset));
+        }
+        // 1 token ~= 0.75 word
+        // do not use config value
+        if ($meta->tokenLimit->remaining < 1000) {
+            sleep($this->strToSeconds($meta->tokenLimit->reset));
+        }
+    }
+
+    private function strToSeconds(string $time): float|int
+    {
+        preg_match('/(?:([0-9]+)h)?(?:([0-9]+)m)?(?:([0-9]+)s)?/', $time, $matches);
+
+        $hours = isset($matches[1]) ? intval($matches[1]) : 0;
+        $minutes = isset($matches[2]) ? intval($matches[2]) : 0;
+        $seconds = isset($matches[3]) ? intval($matches[3]) : 0;
+
+        return $hours * 3600 + $minutes * 60 + $seconds;
     }
 
     public function execute(ProductInterface $product, int $storeId = 0): void
     {
         foreach ($this->getAttributes() as $attributeCode) {
-            $this->enrichAttribute($product, $attributeCode, $storeId);
+            try {
+                $this->enrichAttribute($product, $attributeCode, $storeId);
+            } catch (ErrorException $e) {
+                // try it one more time just in case we failed to catch the limit in backoff
+                sleep(60);
+                $this->enrichAttribute($product, $attributeCode, $storeId);
+            }
         }
+
+        //@TODO: throw exception?
     }
 }

@@ -76,6 +76,14 @@ class Config
         return $prefix ? $prefix . $prompt : $prompt;
     }
 
+    public function getProductPromptToken(String $attributeCode): string
+    {
+        $path = 'catalog_ai/product/' . $attributeCode;
+        return $this->scopeConfig->getValue(
+            $path
+        );
+    }
+
     public function canEnrich(ProductInterface $product): bool
     {
         return $this->isEnabled() && $this->getApiKey() && $product->isObjectNew();
