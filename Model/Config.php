@@ -8,11 +8,13 @@ use Magento\Catalog\Model\Product;
 
 class Config
 {
+    public const XML_PATH_LOCALE_CODE = 'general/locale/code';
     public const XML_PATH_ENRICH_ENABLED = 'catalog_ai/settings/active';
     public const XML_PATH_USE_ASYNC = 'catalog_ai/settings/async';
     public const XML_PATH_OPENAI_API_KEY = 'catalog_ai/settings/openai_key';
     public const XML_PATH_OPENAI_API_MODEL = 'catalog_ai/settings/openai_model';
     public const XML_PATH_OPENAI_API_MAX_TOKENS = 'catalog_ai/settings/openai_max_tokens';
+    public const XML_PATH_OPENAI_API_ADVANCED_TRANSLATE_OUTPUT = 'catalog_ai/advanced/translate_output';
     public const XML_PATH_OPENAI_API_ADVANCED_SYSTEM_PROMPT = 'catalog_ai/advanced/system_prompt';
     public const XML_PATH_OPENAI_API_ADVANCED_TEMPERATURE = 'catalog_ai/advanced/temperature';
     public const XML_PATH_OPENAI_API_ADVANCED_FREQUENCY_PENALTY = 'catalog_ai/advanced/frequency_penalty';
@@ -28,6 +30,7 @@ class Config
             self::XML_PATH_ENRICH_ENABLED
         );
     }
+
     public function IsAsync(): bool
     {
         return $this->scopeConfig->isSetFlag(
@@ -35,18 +38,20 @@ class Config
         );
     }
 
-    public function getApiKey(): mixed
+    public function getApiKey(): string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_KEY
         );
     }
+
     public function getApiModel(): mixed
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_MODEL
         );
     }
+
     public function getApiMaxTokens(): int
     {
         return (int)$this->scopeConfig->getValue(
@@ -99,6 +104,22 @@ class Config
     {
         return (float)$this->scopeConfig->getValue(
             self::XML_PATH_OPENAI_API_ADVANCED_PRESENCE_PENALTY
+        );
+    }
+
+    public function getOutputLanguage(int $storeId = 0): string
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_LOCALE_CODE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function getIsOutputTranslated(): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_OPENAI_API_ADVANCED_TRANSLATE_OUTPUT
         );
     }
 }
