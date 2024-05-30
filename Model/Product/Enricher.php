@@ -15,15 +15,12 @@ use OpenAI\Responses\Chat\CreateResponse;
 class Enricher
 {
     private Client $client;
-
     public function __construct(
-        private Factory $clientFactory,
-        private Config  $config
-    )
-    {
+        private readonly Factory $clientFactory,
+        private readonly Config $config
+    ) {
         $this->client = $this->clientFactory
             ->withApiKey($this->config->getApiKey())
-            ->make();
     }
 
     public function getAttributes(): array

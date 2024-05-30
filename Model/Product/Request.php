@@ -3,19 +3,21 @@ declare(strict_types=1);
 
 namespace MageOS\CatalogDataAI\Model\Product;
 
+use MageOS\CatalogDataAI\Api\RequestInterface;
+
 /**
  * Data model for enrichment message queue.
  */
-class Request
+class Request implements RequestInterface
 {
     public function __construct(
-        private int $id,
-        private bool $overwrite
-    ) {}
+        private readonly int $id,
+        private readonly bool $overwrite
+    ) {
+    }
 
     /**
-     * Retrieve products id.
-     * @return int
+     * @inheritDoc
      */
     public function getId(): int
     {
@@ -23,8 +25,7 @@ class Request
     }
 
     /**
-     * Retrieve overwrite flag.
-     * @return bool
+     * @inheritDoc
      */
     public function getOverwrite(): bool
     {

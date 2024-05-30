@@ -12,7 +12,7 @@
             </product>
             <advanced>
                 <translate_output>1</translate_output>
-                <system_prompt>You are a helpful assistant.</system_prompt>
+                <system_prompt>Be a content generator, just reply with the content, skip all introductions.</system_prompt>
                 <temperature>0</temperature>
                 <frequency_penalty>0</frequency_penalty>
                 <presence_penalty>0</presence_penalty>

@@ -75,8 +75,7 @@ class Config
 
         return $prefix ? $prefix . $prompt : $prompt;
     }
-
-    public function getProductPromptToken(String $attributeCode): string
+    public function getProductPromptToken(string $attributeCode): string
     {
         $path = 'catalog_ai/product/' . $attributeCode;
         return $this->scopeConfig->getValue(
